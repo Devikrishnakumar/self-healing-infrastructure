@@ -1,0 +1,12 @@
+
+groups:
+  - name: nginx-health
+    rules:
+      - alert: NginxDown
+        expr: nginx_up == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "NGINX is unavailable"
+          description: "The NGINX exporter cannot successfully scrape the NGINX server."

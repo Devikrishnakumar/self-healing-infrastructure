@@ -1,0 +1,25 @@
+---
+- name: Recover the NGINX web server
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    ansible_python_interpreter: /usr/local/bin/python
+
+  tasks:
+    - name: Restart the NGINX container
+      community.docker.docker_container:
+        name: self-healing-nginx
+        state: started
+        restart: true
+
+    - name: Confirm NGINX responds after recovery
+      ansible.builtin.uri:
+        url: http://nginx:80/
+        method: GET
+        status_code: 200
+      register: nginx_health
+      retries: 5
+      delay: 2
+      until: nginx_health.status == 200
